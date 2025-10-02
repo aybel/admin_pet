@@ -9,4 +9,9 @@ export default [
     to: { name: 'second-page' },
     icon: { icon: 'ri-file-text-line' },
   },
+  {
+    title: 'Lista de productos',
+    to: { name: 'products' },
+    icon: { icon: 'ri-file-text-line' },
+  },
 ]

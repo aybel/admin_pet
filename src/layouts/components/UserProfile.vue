@@ -41,31 +41,17 @@ const userProfileList = [
     href: '#',
   },
 ]
+
+const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+
 </script>
 
 <template>
-  <VBadge
-    dot
-    bordered
-    location="bottom right"
-    offset-x="2"
-    offset-y="2"
-    color="success"
-    class="user-profile-badge"
-  >
-    <VAvatar
-      class="cursor-pointer"
-      size="38"
-    >
+  <VBadge dot bordered location="bottom right" offset-x="2" offset-y="2" color="success" class="user-profile-badge">
+    <VAvatar class="cursor-pointer" size="38">
       <VImg :src="avatar1" />
-
       <!-- SECTION Menu -->
-      <VMenu
-        activator="parent"
-        width="230"
-        location="bottom end"
-        offset="15px"
-      >
+      <VMenu activator="parent" width="230" location="bottom end" offset="15px">
         <VList>
           <VListItem class="px-4">
             <div class="d-flex gap-x-2 align-center">
@@ -74,60 +60,35 @@ const userProfileList = [
               </VAvatar>
 
               <div>
-                <div class="text-body-2 font-weight-medium text-high-emphasis">
-                  John Doe
+                <div class="text-body-2 font-weight-medium text-high-emphasis" v-if="user">
+                  {{ user.name + ' ' + user.surname }}
                 </div>
-                <div class="text-capitalize text-caption text-disabled">
-                  Admin
+                <div class="text-capitalize text-caption text-disabled" v-if="user">
+                  {{ user.role }}
                 </div>
               </div>
             </div>
           </VListItem>
 
           <PerfectScrollbar :options="{ wheelPropagation: false }">
-            <template
-              v-for="item in userProfileList"
-              :key="item.title"
-            >
-              <VListItem
-                v-if="item.type === 'navItem'"
-                :href="item.href"
-                class="px-4"
-              >
+            <template v-for="item in userProfileList" :key="item.title">
+              <VListItem v-if="item.type === 'navItem'" :href="item.href" class="px-4">
                 <template #prepend>
-                  <VIcon
-                    :icon="item.icon"
-                    size="22"
-                  />
+                  <VIcon :icon="item.icon" size="22" />
                 </template>
 
                 <VListItemTitle>{{ item.title }}</VListItemTitle>
 
-                <template
-                  v-if="item.chipsProps"
-                  #append
-                >
-                  <VChip
-                    v-bind="item.chipsProps"
-                    variant="elevated"
-                  />
+                <template v-if="item.chipsProps" #append>
+                  <VChip v-bind="item.chipsProps" variant="elevated" />
                 </template>
               </VListItem>
 
-              <VDivider
-                v-else
-                class="my-1"
-              />
+              <VDivider v-else class="my-1" />
             </template>
 
             <VListItem class="px-4">
-              <VBtn
-                block
-                color="error"
-                size="small"
-                append-icon="ri-logout-box-r-line"
-                :to="{ name: 'login' }"
-              >
+              <VBtn block color="error" size="small" append-icon="ri-logout-box-r-line" :to="{ name: 'login' }">
                 Logout
               </VBtn>
             </VListItem>
