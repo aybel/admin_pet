@@ -12,10 +12,9 @@ import { themeConfig } from '@themeConfig'
 import { nextTick } from 'vue'
 
 const form = ref({
-  email: '',
-  password: '',
-  remember: false,
-
+  email: 'laravest@gmail.com',
+  password: 'password',
+  remember: true,
 })
 
 const route = useRoute()

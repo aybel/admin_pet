@@ -38,9 +38,9 @@ const router = createRouter({
     ],
     ...[...pages, ...[
       {
-        path: '/products',
-        name: 'products',
-        component: () => import('@/pages/products.vue'),
+        path: '/roles-y-permisos',
+        name: 'roles-y-permisos',
+        component: () => import('@/pages/roles-y-permisos.vue'),
       },
     ]].map(route => recursiveLayouts(route)),
   ],
