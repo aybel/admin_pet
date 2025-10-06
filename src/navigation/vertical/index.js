@@ -7,7 +7,7 @@ export default [
   { heading: 'Accesos' },
   {
     title: 'Roles y Permisos',
-    to: { name: 'roles-y-permisos' },
+    to: { name: 'roles-permisos' },
     icon: { icon: 'ri-lock-password-line' },
   },
   {

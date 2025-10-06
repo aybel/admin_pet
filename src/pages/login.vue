@@ -37,7 +37,7 @@ const login = async () => {
         password: form.value.password,
       },
       onResponseError: ({ response }) => {
-        console.error('Login error:', response._data.error)
+        console.log('Login error:', response._data.error)
       },
     })
 
@@ -47,8 +47,8 @@ const login = async () => {
     await nextTick(() => {
       router.replace(route.query.to ? String(route.query.to) : '/')
     })
-  } catch ({ }) {
-    console.error(error)
+  } catch ({ error}) {
+    console.log(error)
   }
 };
 
