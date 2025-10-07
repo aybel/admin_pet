@@ -65,6 +65,7 @@ const store = async () => {
         success.value = false
         rolNombre.value = null
         permisosSeleccionados.value = []
+        advertencia.value = false
       }, 1500)
     }
   } catch (error) {
