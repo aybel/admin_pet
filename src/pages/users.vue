@@ -3,30 +3,30 @@ import { ref, onMounted } from 'vue'
 import { $api } from '@/utils/api'
 import DialogConfirm from '@/components/DialogConfirm.vue'
 import DialogMensaje from '@/components/DialogMensaje.vue'
-import AddRoleDialog from '@/components/veterinaria/role/AddRoleDialog.vue'
-import EditRoleDialog from '@/components/veterinaria/role/EditRoleDialog.vue'
+import AddUserDialog from '@/components/veterinaria/user/AddUserDialog.vue'
+import EditUserDialog from '@/components/veterinaria/user/EditUserDialog.vue'
 
 const data = ref([])
 const advertencia = ref(false)
 const success = ref(false)
 const eliminar = ref(false)
 const itemToDelete = ref(null)
+const selectedUser = ref(null)
+const isEditUserDialogVisible = ref(false)
 const tipo = ref('error')
-const isEditRoleDialogVisible = ref(false)
-const selectedRole = ref(null)
 
 const refreshDataTable = () => {
   data.value = []
-  loadRolesAndPermissions()
+  loadUsers()
 }
 
 onMounted(() => {
-  loadRolesAndPermissions()
+  loadUsers()
 })
 
-const loadRolesAndPermissions = async () => {
+const loadUsers = async () => {
   try {
-    const response = await $api('/roles/paginated', {
+    const response = await $api('/users/paginated', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ const loadRolesAndPermissions = async () => {
       data.value.push(...response.data)
     }
   } catch (error) {
-    advertencia.value = error.message || 'Ocurrió un error al paginar los roles.'
+    advertencia.value = error.message || 'Ocurrió un error al paginar los usuarios.'
     console.log(error)
   }
 }
@@ -64,15 +64,15 @@ const handleDialogClose = () => {
   itemToDelete.value = null
 }
 
-const handleEditDialogClose = (value) => {
+const handleEditDialogClose = value => {
   if (!value) { // Solo limpiar cuando el modal se cierre (value = false)
-    selectedRole.value = null
+    selectedUser.value = null
   }
 }
 
-const deleteItem = async (item) => {
+const deleteItem = async item => {
   try {
-    const response = await $api('/rol/' + item.id, {
+    const response = await $api(`/user/${item.id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -92,42 +92,43 @@ const deleteItem = async (item) => {
         advertencia.value = false
       }, 1500)
       data.value = []
-      await loadRolesAndPermissions()
+      await loadUsers()
     }
   } catch (error) {
-    advertencia.value = error.message || 'Ocurrió un error al guardar el rol'
+    advertencia.value = error.message || 'Ocurrió un error al eliminar el usuario'
     console.error(error)
     tipo.value = 'error'
   }
 }
 
-const editItem = (item) => {
-  console.log('Editar item:', item)
-  selectedRole.value = item
-  isEditRoleDialogVisible.value = true
+const editItem = item => {
+  console.log('Editar usuario:', item)
+  selectedUser.value = item
+  isEditUserDialogVisible.value = true
 }
-
 
 const headers = [
   { title: 'ID', key: 'id' },
-  { title: 'Rol', key: 'name' },
+  { title: 'Nombre', key: 'name' },
+  { title: 'Email', key: 'email' },
+  { title: 'Rol', key: 'role' },
+  { title: 'Estado', key: 'status' },
   { title: 'Fecha de creación', key: 'created_at' },
-  { title: 'Permisos', key: 'permissions_pluck' },
   { title: 'Acciones', key: 'actions' },
 ]
 
 const searchQuery = ref(null)
-const isAddRoleDialogVisible = ref(false)
+const isAddUserDialogVisible = ref(false)
 </script>
 
 <template>
   <VCard>
+    <VCardTitle>Gestión de Usuarios</VCardTitle>
     <DialogMensaje v-if="advertencia" :mensaje="advertencia" :tipo="tipo" />
-    <VCardTitle>Roles y Permisos</VCardTitle>
     <VCardText class="d-flex flex-wrap gap-4">
       <div class="d-flex align-center">
         <!-- 👉 Search  -->
-        <VTextField v-model="searchQuery" placeholder="Buscar rol" style="inline-size: 200px;" density="compact"
+        <VTextField v-model="searchQuery" placeholder="Buscar usuario" style="inline-size: 200px;" density="compact"
           class="me-3" />
       </div>
       <VSpacer />
@@ -136,8 +137,8 @@ const isAddRoleDialogVisible = ref(false)
         <VBtn variant="outlined" color="secondary" prepend-icon="ri-upload-2-line">
           Exportar
         </VBtn>
-        <VBtn color="primary" prepend-icon="ri-add-line" @click="isAddRoleDialogVisible = !isAddRoleDialogVisible">
-          Agregar Rol
+        <VBtn color="primary" prepend-icon="ri-add-line" @click="isAddUserDialogVisible = !isAddUserDialogVisible">
+          Agregar Usuario
         </VBtn>
       </div>
     </VCardText>
@@ -145,10 +146,15 @@ const isAddRoleDialogVisible = ref(false)
       <template #item.id="{ item }">
         <span class="text-h6">{{ item.id }}</span>
       </template>
-      <template #item.permissions_pluck="{ item }">
-        <ul>
-          <li v-for="perm in item.permissions_pluck" :key="perm">{{ perm }}</li>
-        </ul>
+      <template #item.status="{ item }">
+        <VChip :color="item.status === 'active' ? 'success' : 'error'" size="small">
+          {{ item.status === 'active' ? 'Activo' : 'Inactivo' }}
+        </VChip>
+      </template>
+      <template #item.role="{ item }">
+        <VChip color="primary" size="small">
+          {{ item.role }}
+        </VChip>
       </template>
       <template #item.actions="{ item }">
         <div class="d-flex gap-1">
@@ -161,14 +167,10 @@ const isAddRoleDialogVisible = ref(false)
         </div>
       </template>
     </VDataTable>
-    <DialogConfirm v-if="eliminar" title="Confirmar eliminación" text="¿Estás seguro de que deseas eliminar el rol?"
-      :confirm="confirmDelete" @close="handleDialogClose" />
-    <AddRoleDialog v-model:is-dialog-visible="isAddRoleDialogVisible" @refresh-data-table="refreshDataTable" />
+    <DialogConfirm v-if="eliminar" title="Confirmar eliminación"
+      text="¿Estás seguro de que deseas eliminar este usuario?" :confirm="confirmDelete" @close="handleDialogClose" />
   </VCard>
-  <EditRoleDialog 
-    v-model:is-dialog-visible="isEditRoleDialogVisible" 
-    :rol-data="selectedRole"
-    @refresh-data-table="refreshDataTable" 
-    @update:is-dialog-visible="handleEditDialogClose"
-  />
+  <!-- <AddUserDialog v-model:is-dialog-visible="isAddUserDialogVisible" @refresh-data-table="refreshDataTable" /> -->
+  <!-- <EditUserDialog v-model:is-dialog-visible="isEditUserDialogVisible" :user-data="selectedUser"
+    @refresh-data-table="refreshDataTable" @update:is-dialog-visible="handleEditDialogClose" /> -->
 </template>

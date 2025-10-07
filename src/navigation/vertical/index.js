@@ -11,9 +11,9 @@ export default [
     icon: { icon: 'ri-lock-password-line' },
   },
   {
-    title: 'Staffs',
-    to: { name: 'second-page' },
-    icon: { icon: 'ri-group-line' },
+    title: 'Usuarios',
+    to: { name: 'users' },
+    icon: { icon: 'ri-user-settings-line' },
   },
   { heading: 'Gestion' },
   {

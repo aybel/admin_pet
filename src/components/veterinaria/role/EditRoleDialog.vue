@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { $api } from '@/utils/api'
 
 const props = defineProps({
   isDialogVisible: {
     type: Boolean,
     required: true,
+  },
+  rolData: {
+    type: Object,
+    required: false,
+    default: null,
   },
 })
 
@@ -21,14 +26,19 @@ let permisosSeleccionados = ref([])
 const advertencia = ref(false)
 const success = ref(false)
 
-const agregarPermisoSeleccionado = permiso => {
-  const index = permisosSeleccionados.value.indexOf(permiso)
-  if (index > -1) {
-    permisosSeleccionados.value.splice(index, 1)
+// Watcher para inicializar datos cuando se recibe rolData
+watch(() => props.rolData, newRolData => {
+  if (newRolData) {
+    rolNombre.value = newRolData.name
+
+    // Inicializar permisos seleccionados basándose en los permisos del rol
+    permisosSeleccionados.value = newRolData.permissions_pluck ? [...newRolData.permissions_pluck] : []
   } else {
-    permisosSeleccionados.value.push(permiso)
+    // Limpiar datos cuando no hay rolData
+    rolNombre.value = null
+    permisosSeleccionados.value = []
   }
-}
+}, { immediate: true })
 
 const store = async () => {
   advertencia.value = false
@@ -43,8 +53,8 @@ const store = async () => {
     return
   }
   try {
-    const response = await $api('/rol', {
-      method: 'POST',
+    const response = await $api(`/rol/${props.rolData.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -85,7 +95,7 @@ const store = async () => {
       <VCardText class="pa-5">
         <div class="mb-6">
           <h4 class="text-h4 text-center mb-2">
-            Agregar Rol
+            Editar Rol
           </h4>
         </div>
         <VAlert v-if="advertencia" type="warning" class="mb-4">
@@ -118,8 +128,11 @@ const store = async () => {
                 <div v-for="(perm, idx) in permission.permisos" :key="idx">
                   <ul>
                     <li style="list-style: none;">
-                      <VCheckbox :label="perm.name" :value="perm.permiso"
-                        @click="agregarPermisoSeleccionado(perm.permiso)" />
+                      <VCheckbox
+                        v-model="permisosSeleccionados"
+                        :label="perm.name"
+                        :value="perm.permiso"
+                      />
                     </li>
                   </ul>
                 </div>
@@ -131,15 +144,3 @@ const store = async () => {
     </VCard>
   </VDialog>
 </template>
-
-<style lang="scss">
-.refer-link-input {
-  .v-field--appended {
-    padding-inline-end: 0;
-  }
-
-  .v-field__append-inner {
-    padding-block-start: 0.125rem;
-  }
-}
-</style>
