@@ -27,6 +27,9 @@ const userPassword = ref('')
 const userPasswordConfirm = ref('')
 const userRole = ref('')
 const userStatus = ref('active')
+const userPhone = ref('')
+const userDesignation = ref('')
+const userBirthday = ref('')
 const advertencia = ref(false)
 const success = ref(false)
 const isPasswordVisible = ref(false)
@@ -40,6 +43,10 @@ watch(() => props.userData, newUserData => {
     userEmail.value = newUserData.email || ''
     userRole.value = newUserData.role || ''
     userStatus.value = newUserData.status || 'active'
+    userPhone.value = newUserData.phone || ''
+    userDesignation.value = newUserData.designation || ''
+    userBirthday.value = newUserData.birthday || ''
+
     // No inicializar contraseñas por seguridad
     userPassword.value = ''
     userPasswordConfirm.value = ''
@@ -69,6 +76,9 @@ const resetForm = () => {
   userPasswordConfirm.value = ''
   userRole.value = ''
   userStatus.value = 'active'
+  userPhone.value = ''
+  userDesignation.value = ''
+  userBirthday.value = ''
   changePassword.value = false
   advertencia.value = false
   success.value = false
@@ -139,6 +149,9 @@ const store = async () => {
       email: userEmail.value,
       role: userRole.value,
       status: userStatus.value,
+      phone: userPhone.value,
+      designation: userDesignation.value,
+      birthday: userBirthday.value,
     }
     
     // Solo incluir contraseña si se quiere cambiar
@@ -271,6 +284,40 @@ const store = async () => {
                 />
               </VCol>
             </template>
+            
+            <VCol cols="12" md="6">
+              <VTextField
+                v-model="userPhone"
+                label="Teléfono"
+                placeholder="Ingrese el número de teléfono"
+                density="comfortable"
+                class="mb-4"
+                maxlength="25"
+              />
+            </VCol>
+
+            <VCol cols="12" md="6">
+              <VTextField
+                v-model="userBirthday"
+                label="Fecha de nacimiento"
+                type="date"
+                density="comfortable"
+                class="mb-4"
+              />
+            </VCol>
+
+            <VCol cols="12">
+              <VTextarea
+                v-model="userDesignation"
+                label="Cargo/Designación"
+                placeholder="Ingrese el cargo o designación"
+                density="comfortable"
+                class="mb-4"
+                maxlength="350"
+                rows="3"
+                counter
+              />
+            </VCol>
             
             <VCol cols="12" md="6">
               <VSelect

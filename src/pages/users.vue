@@ -25,25 +25,17 @@ onMounted(() => {
 })
 
 const loadUsers = async () => {
-  try {
-    const response = await $api('/users/paginated', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      onResponseError: ({ response }) => {
-        console.log('Error en la solicitud:', response._data.error)
-        advertencia.value = response._data.error
-      },
-    })
+  const response = await $api('/users/search' + (searchQuery.value ? `?query=${searchQuery.value}` : ''), {
+    method: 'GET',
+    onResponseError: ({ response }) => {
+      advertencia.value = response._data.error
+    },
+  })
 
-    if (response) {
-      data.value.push(...response.data)
-    }
-  } catch (error) {
-    advertencia.value = error.message || 'Ocurrió un error al paginar los usuarios.'
-    console.log(error)
+  if (response) {
+    data.value.push(...response.data)
   }
+
 }
 
 const clickEliminar = item => {
@@ -111,6 +103,8 @@ const headers = [
   { title: 'ID', key: 'id' },
   { title: 'Nombre', key: 'name' },
   { title: 'Email', key: 'email' },
+  { title: 'Teléfono', key: 'phone' },
+  { title: 'Cargo', key: 'designation' },
   { title: 'Rol', key: 'role' },
   { title: 'Estado', key: 'status' },
   { title: 'Fecha de creación', key: 'created_at' },
@@ -153,7 +147,7 @@ const isAddUserDialogVisible = ref(false)
       </template>
       <template #item.role="{ item }">
         <VChip color="primary" size="small">
-          {{ item.role }}
+          {{ item.role.name }}
         </VChip>
       </template>
       <template #item.actions="{ item }">
@@ -170,7 +164,7 @@ const isAddUserDialogVisible = ref(false)
     <DialogConfirm v-if="eliminar" title="Confirmar eliminación"
       text="¿Estás seguro de que deseas eliminar este usuario?" :confirm="confirmDelete" @close="handleDialogClose" />
   </VCard>
-  <!-- <AddUserDialog v-model:is-dialog-visible="isAddUserDialogVisible" @refresh-data-table="refreshDataTable" /> -->
+  <AddUserDialog v-model:is-dialog-visible="isAddUserDialogVisible" @refresh-data-table="refreshDataTable" />
   <!-- <EditUserDialog v-model:is-dialog-visible="isEditUserDialogVisible" :user-data="selectedUser"
     @refresh-data-table="refreshDataTable" @update:is-dialog-visible="handleEditDialogClose" /> -->
 </template>
