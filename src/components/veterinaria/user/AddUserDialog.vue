@@ -143,7 +143,7 @@ const store = async () => {
         email: userEmail.value,
         password: userPassword.value,
         password_confirmation: userPasswordConfirm.value,
-        role: userRole.value,
+        role_id: userRole.value,
         status: userStatus.value,
         phone: userPhone.value,
         designation: userDesignation.value,

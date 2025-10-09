@@ -165,6 +165,6 @@ const isAddUserDialogVisible = ref(false)
       text="¿Estás seguro de que deseas eliminar este usuario?" :confirm="confirmDelete" @close="handleDialogClose" />
   </VCard>
   <AddUserDialog v-model:is-dialog-visible="isAddUserDialogVisible" @refresh-data-table="refreshDataTable" />
-  <!-- <EditUserDialog v-model:is-dialog-visible="isEditUserDialogVisible" :user-data="selectedUser"
-    @refresh-data-table="refreshDataTable" @update:is-dialog-visible="handleEditDialogClose" /> -->
+  <EditUserDialog v-model:is-dialog-visible="isEditUserDialogVisible" :user-data="selectedUser"
+    @refresh-data-table="refreshDataTable" @update:is-dialog-visible="handleEditDialogClose" />
 </template>
