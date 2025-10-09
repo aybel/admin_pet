@@ -136,18 +136,39 @@ const isAddUserDialogVisible = ref(false)
         </VBtn>
       </div>
     </VCardText>
+
     <VDataTable :headers="headers" :items="data" :items-per-page="5" class="text-no-wrap">
+      <template #item.fullName="{ item }">
+        <div class="d-flex align-center">
+          <VAvatar size="32" :color="item.avatar ? '' : 'primary'"
+            :class="item.avatar ? '' : 'v-avatar-light-bg primary--text'" :variant="!item.avatar ? 'tonal' : undefined">
+            <VImg v-if="item.avatar" :src="item.avatar" />
+            <span v-else class="text-sm">{{ avatarText(item.name) }}</span>
+          </VAvatar>
+          <div class="d-flex flex-column ms-3">
+            <span class="d-block font-weight-medium text-high-emphasis text-truncate">{{ item.name }}</span>
+            <small>{{ item.name }}</small>
+          </div>
+        </div>
+      </template>
       <template #item.id="{ item }">
         <span class="text-h6">{{ item.id }}</span>
       </template>
       <template #item.status="{ item }">
-        <VChip :color="item.status === 'active' ? 'success' : 'error'" size="small">
-          {{ item.status === 'active' ? 'Activo' : 'Inactivo' }}
+        <VChip :color="item.active === true ? 'success' : 'error'" size="small">
+          {{ item.active === true ? 'Activo' : 'Inactivo' }}
         </VChip>
       </template>
       <template #item.role="{ item }">
         <VChip color="primary" size="small">
           {{ item.role.name }}
+        </VChip>
+      </template>
+      <template #item.created_at="{ item }">
+        <VChip color="primary" size="small">
+          <span v-if="item.created_at">{{ new Date(item.created_at).toLocaleDateString('es-ES', {
+            day: '2-digit', month:
+              '2-digit', year: 'numeric' }) }}</span>
         </VChip>
       </template>
       <template #item.actions="{ item }">

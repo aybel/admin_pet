@@ -130,31 +130,34 @@ const store = async () => {
   if (!validateForm()) {
     return
   }
+  const formData = new FormData()
 
+  formData.append('name', userName.value)
+  formData.append('surname', userLastName.value)
+  formData.append('email', userEmail.value)
+  formData.append('password', userPassword.value)
+  formData.append('password_confirmation', userPasswordConfirm.value)
+  formData.append('role_id', userRole.value)
+  formData.append('status', userStatus.value)
+  formData.append('phone', userPhone.value)
+  formData.append('designation', userDesignation.value)
+  formData.append('birthday', userBirthday.value)
+  if (userAvatar.value && userAvatar.value instanceof File) {
+    formData.append('avatar', userAvatar.value)
+  }
   try {
+
     const response = await $api('/users', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: userName.value,
-        surname: userLastName.value,
-        email: userEmail.value,
-        password: userPassword.value,
-        password_confirmation: userPasswordConfirm.value,
-        role_id: userRole.value,
-        status: userStatus.value,
-        phone: userPhone.value,
-        designation: userDesignation.value,
-        birthday: userBirthday.value,
-        avatar: userAvatar.value,
-      }),
+      body: formData,
       onResponseError: ({ response }) => {
-
-        console.log(response._data.message)
-        console.log('Error en la solicitud:', response._data.message)
-        advertencia.value = response._data.message
+        if (response._data.errors.avatar) {
+          if (Array.isArray(response._data.errors.avatar)) {
+            advertencia.value += response._data.errors.avatar.join(', ')
+          }
+        } else {
+          advertencia.value = response._data.error
+        }
       },
     })
 
@@ -167,7 +170,7 @@ const store = async () => {
       emit('refreshDataTable')
     }
   } catch (error) {
-    advertencia.value = error.message || 'Ocurrió un error al crear el usuario'
+    //advertencia.value = error.message || 'Ocurrió un error al crear el usuario'
     console.error(error)
   }
 }
@@ -244,18 +247,11 @@ const store = async () => {
             </VCol>
 
             <VCol cols="12">
-              <VFileInput
-                v-model="userAvatar"
-                label="Avatar (Opcional)"
-                placeholder="Seleccione una imagen para el avatar"
-                accept="image/*"
-                prepend-icon="ri-image-line"
-                density="comfortable"
-                class="mb-4"
-                show-size
-              />
+              <VFileInput v-model="userAvatar" label="Avatar (Opcional)"
+                placeholder="Seleccione una imagen para el avatar" accept="image/*" prepend-icon="ri-image-line"
+                density="comfortable" class="mb-4" show-size />
             </VCol>
-            
+
             <VCol cols="12" md="6">
               <VSelect v-model="userRole" label="Rol *" placeholder="Seleccione un rol" :items="roleOptions"
                 density="comfortable" class="mb-4" />
