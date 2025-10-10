@@ -26,11 +26,11 @@ onMounted(() => {
 
 // Formulario del usuario
 const userName = ref('')
+const userSurname = ref('')
 const userEmail = ref('')
 const userPassword = ref('')
 const userPasswordConfirm = ref('')
 const userRole = ref('')
-const userStatus = ref('active')
 const userPhone = ref('')
 const userDesignation = ref('')
 const userBirthday = ref('')
@@ -45,9 +45,9 @@ const changePassword = ref(false)
 watch(() => props.userData, newUserData => {
   if (newUserData) {
     userName.value = newUserData.name || ''
+    userSurname.value = newUserData.surname || ''
     userEmail.value = newUserData.email || ''
     userRole.value = newUserData.role.id || ''
-    userStatus.value = newUserData.status || 'active'
     userPhone.value = newUserData.phone || ''
     userDesignation.value = newUserData.designation || ''
     userBirthday.value = newUserData.birthday || ''
@@ -81,18 +81,13 @@ const loadRoles = async () => {
 // Opciones para los selects
 const roleOptions = ref([])
 
-const statusOptions = [
-  { title: 'Activo', value: 'active' },
-  { title: 'Inactivo', value: 'inactive' },
-]
-
 const resetForm = () => {
   userName.value = ''
+  userSurname.value = ''
   userEmail.value = ''
   userPassword.value = ''
   userPasswordConfirm.value = ''
   userRole.value = ''
-  userStatus.value = 'active'
   userPhone.value = ''
   userDesignation.value = ''
   userBirthday.value = ''
@@ -105,6 +100,12 @@ const resetForm = () => {
 const validateForm = () => {
   if (!userName.value.trim()) {
     advertencia.value = "El nombre es requerido"
+
+    return false
+  }
+
+  if (!userSurname.value.trim()) {
+    advertencia.value = "El apellido es requerido"
 
     return false
   }
@@ -164,11 +165,10 @@ const store = async () => {
     const formData = new FormData()
 
     // Agregar campos al FormData
-    //formData.append('id', props.userData.id)
     formData.append('name', userName.value)
+    formData.append('surname', userSurname.value)
     formData.append('email', userEmail.value)
-    formData.append('role', userRole.value)
-    formData.append('status', userStatus.value)
+    formData.append('role_id', userRole.value)
     formData.append('phone', userPhone.value)
     formData.append('designation', userDesignation.value)
     formData.append('birthday', userBirthday.value)
@@ -185,7 +185,7 @@ const store = async () => {
 
 
     const response = await $api(`/users/${props.userData.id}`, {
-      method: 'PUT',
+      method: 'POST',
       body: formData,
       onResponseError: ({ response }) => {
         console.log(response._data)
@@ -234,8 +234,13 @@ const store = async () => {
         <!-- Formulario -->
         <VForm>
           <VRow>
-            <VCol cols="12">
-              <VTextField v-model="userName" label="Nombre completo *" placeholder="Ingrese el nombre completo"
+            <VCol cols="12" md="6">
+              <VTextField v-model="userName" label="Nombre *" placeholder="Ingrese el nombre"
+                density="comfortable" class="mb-4" />
+            </VCol>
+
+            <VCol cols="12" md="6">
+              <VTextField v-model="userSurname" label="Apellido *" placeholder="Ingrese el apellido"
                 density="comfortable" class="mb-4" />
             </VCol>
 
@@ -287,13 +292,9 @@ const store = async () => {
                 density="comfortable" class="mb-4" show-size />
             </VCol>
 
-            <VCol cols="12" md="6">
+            <VCol cols="12">
               <VSelect v-model="userRole" label="Rol *" placeholder="Seleccione un rol" :items="roleOptions"
                 density="comfortable" class="mb-4" />
-            </VCol>
-
-            <VCol cols="12" md="6">
-              <VSelect v-model="userStatus" label="Estado" :items="statusOptions" density="comfortable" class="mb-4" />
             </VCol>
           </VRow>
         </VForm>

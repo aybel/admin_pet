@@ -26,7 +26,6 @@ const userEmail = ref('')
 const userPassword = ref('')
 const userPasswordConfirm = ref('')
 const userRole = ref('')
-const userStatus = ref('active')
 const userPhone = ref('')
 const userDesignation = ref('')
 const userBirthday = ref('')
@@ -57,11 +56,6 @@ const loadRoles = async () => {
   }
 }
 
-const statusOptions = [
-  { title: 'Activo', value: 'active' },
-  { title: 'Inactivo', value: 'inactive' },
-]
-
 const resetForm = () => {
   userName.value = ''
   userLastName.value = ''
@@ -69,7 +63,6 @@ const resetForm = () => {
   userPassword.value = ''
   userPasswordConfirm.value = ''
   userRole.value = ''
-  userStatus.value = 'active'
   userPhone.value = ''
   userDesignation.value = ''
   userBirthday.value = ''
@@ -138,7 +131,6 @@ const store = async () => {
   formData.append('password', userPassword.value)
   formData.append('password_confirmation', userPasswordConfirm.value)
   formData.append('role_id', userRole.value)
-  formData.append('status', userStatus.value)
   formData.append('phone', userPhone.value)
   formData.append('designation', userDesignation.value)
   formData.append('birthday', userBirthday.value)
@@ -252,13 +244,9 @@ const store = async () => {
                 density="comfortable" class="mb-4" show-size />
             </VCol>
 
-            <VCol cols="12" md="6">
+            <VCol cols="12">
               <VSelect v-model="userRole" label="Rol *" placeholder="Seleccione un rol" :items="roleOptions"
                 density="comfortable" class="mb-4" />
-            </VCol>
-
-            <VCol cols="12" md="6">
-              <VSelect v-model="userStatus" label="Estado" :items="statusOptions" density="comfortable" class="mb-4" />
             </VCol>
           </VRow>
         </VForm>
