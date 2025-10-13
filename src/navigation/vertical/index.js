@@ -12,7 +12,7 @@ export default [
   },
   {
     title: 'Usuarios',
-    to: { name: 'users' },
+    to: { name: 'list-user' },
     icon: { icon: 'ri-user-settings-line' },
   },
   { heading: 'Gestion' },
@@ -27,7 +27,7 @@ export default [
       },
       {
         title: 'Listado',
-        to: 'second-page',
+        to: 'list-veterinary',
         icon: { icon: 'ri-radio-button-line' },
       },
     ],

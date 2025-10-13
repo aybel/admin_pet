@@ -31,17 +31,12 @@ const router = createRouter({
           if (!userData) {
             return { name: 'login', query: to.query }
           }
-          
+
           return { name: 'dashboard', query: to.query }
         },
       },
     ],
     ...[...pages, ...[
-      {
-        path: '/roles-permisos',
-        name: 'roles-permisos',
-        component: () => import('@/pages/roles-permisos.vue'),
-      },
     ]].map(route => recursiveLayouts(route)),
   ],
 })

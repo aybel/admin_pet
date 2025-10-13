@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { definePage } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { $api } from '@/utils/api'
 import DialogConfirm from '@/components/DialogConfirm.vue'
 import DialogMensaje from '@/components/DialogMensaje.vue'
 import AddRoleDialog from '@/components/veterinaria/role/AddRoleDialog.vue'
 import EditRoleDialog from '@/components/veterinaria/role/EditRoleDialog.vue'
+
+definePage({
+  meta: {
+    permissions: 'roles-permisos',
+  },
+})
 
 const data = ref([])
 const advertencia = ref(false)

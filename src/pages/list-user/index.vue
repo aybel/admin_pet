@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { definePage } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { $api } from '@/utils/api'
 import DialogConfirm from '@/components/DialogConfirm.vue'
 import DialogMensaje from '@/components/DialogMensaje.vue'
 import AddUserDialog from '@/components/veterinaria/user/AddUserDialog.vue'
 import EditUserDialog from '@/components/veterinaria/user/EditUserDialog.vue'
+
+definePage({
+  meta: {
+    permissions: 'list_user',
+  },
+})
 
 const data = ref([])
 const advertencia = ref('')
@@ -23,6 +30,7 @@ const refreshDataTable = () => {
 onMounted(() => {
   loadUsers()
 })
+
 
 const loadUsers = async () => {
   const response = await $api('/users/search' + (searchQuery.value ? `?query=${searchQuery.value}` : ''), {
@@ -118,10 +126,10 @@ const exportToExcel = () => {
 
   // Convertir a CSV
   const csvContent = convertToCSV(exportData)
-  
+
   // Crear y descargar el archivo
   downloadCSV(csvContent, 'usuarios.csv')
-  
+
   // Mostrar mensaje de éxito
   success.value = 'Datos exportados exitosamente'
   setTimeout(() => {
@@ -131,11 +139,11 @@ const exportToExcel = () => {
 
 const convertToCSV = (data) => {
   if (!data.length) return ''
-  
+
   const headers = Object.keys(data[0])
   const csvHeaders = headers.join(',')
-  
-  const csvRows = data.map(row => 
+
+  const csvRows = data.map(row =>
     headers.map(header => {
       const value = row[header]
       // Escapar comillas y envolver en comillas si contiene comas o comillas
@@ -145,7 +153,7 @@ const convertToCSV = (data) => {
       return value
     }).join(',')
   )
-  
+
   return [csvHeaders, ...csvRows].join('\n')
 }
 
@@ -153,13 +161,13 @@ const downloadCSV = (csvContent, filename) => {
   // Agregar BOM para caracteres especiales en Excel
   const BOM = '\uFEFF'
   const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
-  
+
   const link = document.createElement('a')
   const url = URL.createObjectURL(blob)
   link.setAttribute('href', url)
   link.setAttribute('download', filename)
   link.style.visibility = 'hidden'
-  
+
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

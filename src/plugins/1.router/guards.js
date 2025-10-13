@@ -72,9 +72,34 @@ export const setupGuards = router => {
       else
         return undefined
     }
-    if (!to.meta.not_authenticated) {
+
+    if (to.meta.not_authenticated == false) {
       return true
     }
+
+    let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+
+
+    if (user && user.role.name !== 'Super-Admin') {
+
+      let permissions = user.permissions
+
+      if (to.meta.permissions) {
+        
+        if (to.meta.permissions === 'all')
+          return true
+
+        if (Array.isArray(to.meta.permissions)) {
+          const hasPermission = to.meta.permissions.some(permission => permissions.includes(permission))
+          if (!hasPermission)
+            return { name: 'not-authorized' }
+        }
+        else if (!permissions.includes(to.meta.permissions)) {
+          return { name: 'not-authorized' }
+        }
+      }
+    }
+
     if (to.matched.length && !isLoggedIn) {
       /* eslint-disable indent */
       return isLoggedIn
