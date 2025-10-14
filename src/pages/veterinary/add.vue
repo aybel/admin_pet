@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { $api } from '@/utils/api'
+import { VCol } from 'vuetify/components'
+import ScheduleVeterinary from './schedule-veterinary.vue'
 
 const emit = defineEmits(['refreshDataTable'])
 
@@ -34,6 +36,7 @@ const isPasswordConfirmVisible = ref(false)
 // Opciones para los selects
 const roleOptions = ref()
 const hoursOptions = ref()
+const selectedOptions = ref([])
 
 // Cargar roles desde la API
 const loadRoles = async () => {
@@ -56,7 +59,7 @@ const loadRoles = async () => {
 }
 
 const loadHours = async () => {
-  const response = await $api('/schedule-hours', {
+  const response = await $api('/schedule-hours/availability/group-hours', {
     method: 'GET',
     onResponseError: ({ response }) => {
       advertencia.value = response._data.message
@@ -64,8 +67,18 @@ const loadHours = async () => {
   })
 
   if (response) {
-    hoursOptions.value = response.data.data.map(item => ({ title: `${item.start_time} - ${item.end_time}`, value: `${item.id}` }))
+    hoursOptions.value = response.data.map(item => (
+      {
+        hour: `${item.hour}`, value: `${item.id}`,
+        intervals: item.intervals,
+      }
+    ))
   }
+}
+
+// Función para manejar los intervalos seleccionados
+const handleSelectedIntervals = (intervals) => {
+  selectedOptions.value = intervals
 }
 
 const resetForm = () => {
@@ -256,8 +269,10 @@ const store = async () => {
               density="comfortable" class="mb-4" />
           </VCol>
           <VCol cols="12">
-            <VSelect v-model="selectedOptions" :items="hoursOptions" :menu-props="{ maxHeight: '400' }" label="Horario"
-              multiple persistent-hint placeholder="Seleccciona los horarios de consulta" />
+            <ScheduleVeterinary 
+              :hours-data="hoursOptions" 
+              @update:selected-intervals="handleSelectedIntervals"
+            /> 
           </VCol>
         </VRow>
       </VForm>
@@ -265,10 +280,10 @@ const store = async () => {
       <!-- Botones -->
       <div class="d-flex justify-end gap-4 mt-6">
         <VBtn variant="outlined" to="/users">
-          Cancelar
+          Limpiar formulario
         </VBtn>
         <VBtn color="primary" @click="store">
-          Guardar Usuario
+          Guardar veterinario
         </VBtn>
       </div>
     </VCardText>

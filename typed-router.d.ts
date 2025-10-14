@@ -29,5 +29,6 @@ declare module 'vue-router/auto-routes' {
     'roles-permisos': RouteRecordInfo<'roles-permisos', '/roles-permisos', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'veterinary-add': RouteRecordInfo<'veterinary-add', '/veterinary/add', Record<never, never>, Record<never, never>>,
+    'veterinary-schedule-veterinary': RouteRecordInfo<'veterinary-schedule-veterinary', '/veterinary/schedule-veterinary', Record<never, never>, Record<never, never>>,
   }
 }
