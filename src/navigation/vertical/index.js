@@ -22,7 +22,7 @@ export default [
     children: [
       {
         title: 'Registrar',
-        to: 'second-page',
+        to: 'veterinary-add',
         icon: { icon: 'ri-radio-button-line' },
       },
       {
