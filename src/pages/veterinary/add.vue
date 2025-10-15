@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, nextTick } from 'vue'
 import { $api } from '@/utils/api'
 import { VCol } from 'vuetify/components'
 import ScheduleVeterinary from './schedule-veterinary.vue'
@@ -79,6 +79,7 @@ const loadHours = async () => {
 // Función para manejar los intervalos seleccionados
 const handleSelectedIntervals = (intervals) => {
   selectedOptions.value = intervals
+  //console.log('Horarios seleccionados:', intervals)
 }
 
 const resetForm = () => {
@@ -99,16 +100,37 @@ const resetForm = () => {
 const validateForm = () => {
   if (!userName.value.trim()) {
     advertencia.value = "El nombre es requerido"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="Ingrese el nombre completo"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
   if (!userLastName.value.trim()) {
     advertencia.value = "El apellido es requerido"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="Ingrese el apellido"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
   if (!userEmail.value.trim()) {
     advertencia.value = "El email es requerido"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="usuario@ejemplo.com"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
@@ -116,26 +138,72 @@ const validateForm = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(userEmail.value)) {
     advertencia.value = "El formato del email no es válido"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="usuario@ejemplo.com"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
   if (!userPassword.value) {
     advertencia.value = "La contraseña es requerida"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="Ingrese la contraseña"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
   if (userPassword.value.length < 6) {
     advertencia.value = "La contraseña debe tener al menos 6 caracteres"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="Ingrese la contraseña"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
   if (userPassword.value !== userPasswordConfirm.value) {
     advertencia.value = "Las contraseñas no coinciden"
+    nextTick(() => {
+      const input = document.querySelector('input[placeholder="Confirme la contraseña"]')
+      if (input) {
+        input.focus()
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
   if (!userRole.value) {
     advertencia.value = "Debe seleccionar un rol"
+    nextTick(() => {
+      const select = document.querySelector('[placeholder="Seleccione un rol"]')
+      if (select) {
+        select.focus()
+        select.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
+    return false
+  }
+
+  if (!selectedOptions.value || selectedOptions.value.length === 0) {
+    advertencia.value = "Debe seleccionar al menos un horario"
+    nextTick(() => {
+      const scheduleTable = document.querySelector('.v-data-table')
+      if (scheduleTable) {
+        scheduleTable.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    })
     return false
   }
 
@@ -151,7 +219,7 @@ const store = async () => {
   const formData = new FormData()
 
   formData.append('name', userName.value)
-  formData.append('surname', userLastName.value)
+  formData.append('last_name', userLastName.value)
   formData.append('email', userEmail.value)
   formData.append('password', userPassword.value)
   formData.append('password_confirmation', userPasswordConfirm.value)
@@ -163,9 +231,11 @@ const store = async () => {
   if (userAvatar.value && userAvatar.value instanceof File) {
     formData.append('avatar', userAvatar.value)
   }
+  console.log(formData);
+  
   try {
 
-    const response = await $api('/users', {
+    const response = await $api('/veterinarians', {
       method: 'POST',
       body: formData,
       onResponseError: ({ response }) => {
@@ -269,10 +339,7 @@ const store = async () => {
               density="comfortable" class="mb-4" />
           </VCol>
           <VCol cols="12">
-            <ScheduleVeterinary 
-              :hours-data="hoursOptions" 
-              @update:selected-intervals="handleSelectedIntervals"
-            /> 
+            <ScheduleVeterinary :hours-data="hoursOptions" @update:selected-intervals="handleSelectedIntervals" />
           </VCol>
         </VRow>
       </VForm>
@@ -289,15 +356,3 @@ const store = async () => {
     </VCardText>
   </VCard>
 </template>
-
-<style lang="scss">
-.user-dialog {
-  .v-field--appended {
-    padding-inline-end: 0;
-  }
-
-  .v-field__append-inner {
-    padding-block-start: 0.125rem;
-  }
-}
-</style>

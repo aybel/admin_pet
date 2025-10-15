@@ -7,7 +7,11 @@ export {}
 declare global {
   const $api: typeof import('./src/utils/api.js')['$api']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']
+  const DAYS_ES: typeof import('./src/utils/constants.js')['DAYS_ES']
+  const DAYS_TO_NUMBER: typeof import('./src/utils/constants.js')['DAYS_TO_NUMBER']
+  const ENGLISH_TO_SPANISH_DAYS: typeof import('./src/utils/constants.js')['ENGLISH_TO_SPANISH_DAYS']
   const EffectScope: typeof import('vue')['EffectScope']
+  const NUMBER_TO_DAYS: typeof import('./src/utils/constants.js')['NUMBER_TO_DAYS']
   const PERMISOS: typeof import('./src/utils/constants.js')['PERMISOS']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const alphaDashValidator: typeof import('./src/@core/utils/validators.js')['alphaDashValidator']
@@ -360,7 +364,11 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly $api: UnwrapRef<typeof import('./src/utils/api.js')['$api']>
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']>
+    readonly DAYS_ES: UnwrapRef<typeof import('./src/utils/constants.js')['DAYS_ES']>
+    readonly DAYS_TO_NUMBER: UnwrapRef<typeof import('./src/utils/constants.js')['DAYS_TO_NUMBER']>
+    readonly ENGLISH_TO_SPANISH_DAYS: UnwrapRef<typeof import('./src/utils/constants.js')['ENGLISH_TO_SPANISH_DAYS']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly NUMBER_TO_DAYS: UnwrapRef<typeof import('./src/utils/constants.js')['NUMBER_TO_DAYS']>
     readonly PERMISOS: UnwrapRef<typeof import('./src/utils/constants.js')['PERMISOS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly alphaDashValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['alphaDashValidator']>
@@ -706,7 +714,11 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     readonly $api: UnwrapRef<typeof import('./src/utils/api.js')['$api']>
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']>
+    readonly DAYS_ES: UnwrapRef<typeof import('./src/utils/constants.js')['DAYS_ES']>
+    readonly DAYS_TO_NUMBER: UnwrapRef<typeof import('./src/utils/constants.js')['DAYS_TO_NUMBER']>
+    readonly ENGLISH_TO_SPANISH_DAYS: UnwrapRef<typeof import('./src/utils/constants.js')['ENGLISH_TO_SPANISH_DAYS']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly NUMBER_TO_DAYS: UnwrapRef<typeof import('./src/utils/constants.js')['NUMBER_TO_DAYS']>
     readonly PERMISOS: UnwrapRef<typeof import('./src/utils/constants.js')['PERMISOS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly alphaDashValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['alphaDashValidator']>

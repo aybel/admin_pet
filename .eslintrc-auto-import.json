@@ -351,6 +351,10 @@
     "watchTriggerable": true,
     "watchWithFilter": true,
     "whenever": true,
-    "PERMISOS": true
+    "PERMISOS": true,
+    "DAYS_ES": true,
+    "DAYS_TO_NUMBER": true,
+    "NUMBER_TO_DAYS": true,
+    "ENGLISH_TO_SPANISH_DAYS": true
   }
 }
