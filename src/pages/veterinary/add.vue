@@ -254,8 +254,8 @@ const store = async () => {
       setTimeout(() => {
         resetForm()
       }, 1500)
-      emit('refreshDataTable')
     }
+    
   } catch (error) {
     //advertencia.value = error.message || 'Ocurrió un error al crear el usuario'
     console.error(error)
