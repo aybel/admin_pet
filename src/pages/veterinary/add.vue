@@ -79,7 +79,9 @@ const loadHours = async () => {
 // Función para manejar los intervalos seleccionados
 const handleSelectedIntervals = (intervals) => {
   selectedOptions.value = intervals
-  //console.log('Horarios seleccionados:', intervals)
+
+  console.log(selectedOptions.value)
+
 }
 
 const resetForm = () => {
@@ -95,6 +97,7 @@ const resetForm = () => {
   userAvatar.value = null
   advertencia.value = false
   success.value = false
+  selectedOptions.value = false
 }
 
 const validateForm = () => {
@@ -216,49 +219,82 @@ const store = async () => {
   if (!validateForm()) {
     return
   }
+
   const formData = new FormData()
 
+  // Campos básicos del usuario
   formData.append('name', userName.value)
   formData.append('last_name', userLastName.value)
   formData.append('email', userEmail.value)
   formData.append('password', userPassword.value)
   formData.append('password_confirmation', userPasswordConfirm.value)
   formData.append('role_id', userRole.value)
-  formData.append('phone', userPhone.value)
-  formData.append('designation', userDesignation.value)
-  formData.append('birthday', userBirthday.value)
-  formData.append('schedule_hours', JSON.stringify(selectedOptions.value))
+
+  // Campos opcionales
+  if (userPhone.value) {
+    formData.append('phone', userPhone.value)
+  }
+  if (userDesignation.value) {
+    formData.append('designation', userDesignation.value)
+  }
+  if (userBirthday.value) {
+    formData.append('birthday', userBirthday.value)
+  }
+
+  // Horarios seleccionados
+  if (selectedOptions.value && selectedOptions.value.length > 0) {
+    formData.append('schedule_hours', JSON.stringify(selectedOptions.value))
+  }
+
+  // Avatar (solo si existe)
   if (userAvatar.value && userAvatar.value instanceof File) {
     formData.append('avatar', userAvatar.value)
   }
-  console.log(formData);
-  
-  try {
 
+  try {
     const response = await $api('/veterinarians', {
       method: 'POST',
       body: formData,
       onResponseError: ({ response }) => {
-        if (response._data.errors.avatar) {
-          if (Array.isArray(response._data.errors.avatar)) {
-            advertencia.value += response._data.errors.avatar.join(', ')
-          }
-        } else {
+        console.error('Error de respuesta:', response._data)
+
+        if (response._data?.errors) {
+          // Manejar errores específicos de validación
+          const errors = response._data.errors
+          let errorMessage = ''
+
+          Object.keys(errors).forEach(field => {
+            if (Array.isArray(errors[field])) {
+              errorMessage += errors[field].join(', ') + ' '
+            } else {
+              errorMessage += errors[field] + ' '
+            }
+          })
+
+          advertencia.value = errorMessage.trim()
+        } else if (response._data?.message) {
+          advertencia.value = response._data.message
+        } else if (response._data?.error) {
           advertencia.value = response._data.error
+        } else {
+          advertencia.value = 'Error al crear el veterinario'
         }
       },
     })
 
     if (response && response.success) {
-      success.value = response.message
+      success.value = response.message || 'Veterinario creado exitosamente'
       setTimeout(() => {
         resetForm()
       }, 1500)
+      emit('refreshDataTable')
     }
-    
+    nextTick(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
   } catch (error) {
-    //advertencia.value = error.message || 'Ocurrió un error al crear el usuario'
-    console.error(error)
+    console.error('Error en la petición:', error)
+    advertencia.value = 'Ocurrió un error al crear el veterinario. Verifique su conexión.'
   }
 }
 </script>
