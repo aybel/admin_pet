@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import DialogConfirm from '@/components/DialogConfirm.vue'
+import DialogMensaje from '@/components/DialogMensaje.vue'
 
 definePage({
   meta: {
@@ -16,6 +18,8 @@ const itemToDelete = ref(null)
 const selectedUser = ref(null)
 const isEditUserDialogVisible = ref(false)
 const tipo = ref('error')
+const searchQuery = ref(null)
+const isAddUserDialogVisible = ref(false)
 
 const loadVeterinarians = async () => {
   const response = await $api('/veterinarians/search' + (searchQuery.value ? `?query=${searchQuery.value}` : ''), {
@@ -24,9 +28,10 @@ const loadVeterinarians = async () => {
       advertencia.value = response._data.error
     },
   })
-  
+
   if (response) {
     data.value.push(...response.data)
+    //console.log(data)
   }
 
 }
@@ -36,13 +41,71 @@ const headers = [
   { title: 'Nombre', key: 'name' },
   { title: 'Email', key: 'email' },
   { title: 'Teléfono', key: 'phone' },
-  { title: 'Cargo', key: 'designation' },
-  { title: 'Rol', key: 'role' },
   { title: 'Estado', key: 'status' },
   { title: 'Fecha de creación', key: 'created_at' },
   { title: 'Acciones', key: 'actions' },
 ]
 
+const clickEliminar = item => {
+  itemToDelete.value = item
+  eliminar.value = true
+}
+
+const confirmDelete = () => {
+  if (itemToDelete.value) {
+    deleteItem(itemToDelete.value)
+    eliminar.value = false
+    itemToDelete.value = null
+  }
+}
+
+const handleDialogClose = () => {
+  eliminar.value = false
+  itemToDelete.value = null
+}
+
+const deleteItem = async item => {
+  try {
+    const response = await $api(`/users/${item.id}`, {
+      method: 'DELETE',
+      onResponseError: ({ response }) => {
+        console.log('Error en la solicitud:', response._data.error)
+        advertencia.value = response._data.error
+      },
+    })
+
+    if (response && response.success) {
+      success.value = response.success
+      tipo.value = 'success'
+      advertencia.value = response.message
+      setTimeout(() => {
+        success.value = ''
+        advertencia.value = ''
+      }, 1500)
+      data.value = []
+      await loadVeterinarians()
+    }
+  } catch (error) {
+    advertencia.value = error.message || 'Ocurrió un error al eliminar el usuario'
+    console.error(error)
+    tipo.value = 'error'
+  }
+}
+
+const avatarText = name => {
+  return name?.split(' ').map(word => word.charAt(0).toUpperCase()).join('').slice(0, 2) || 'UN'
+}
+
+const editItem = item => {
+  // Redirigir a la página de edición del veterinario
+  selectedUser.value = item
+  isEditUserDialogVisible.value = true
+}
+
+const exportToExcel = () => {
+  // Implementar función de exportación
+  console.log('Exportar veterinarios')
+}
 
 onMounted(() => {
   loadVeterinarians()
@@ -66,39 +129,30 @@ onMounted(() => {
         <VBtn variant="outlined" color="secondary" prepend-icon="ri-upload-2-line" @click="exportToExcel">
           Exportar
         </VBtn>
-        <VBtn color="primary" prepend-icon="ri-add-line" @click="isAddUserDialogVisible = !isAddUserDialogVisible">
-          Agregar Usuario
-        </VBtn>
       </div>
     </VCardText>
 
     <VDataTable :headers="headers" :items="data" :items-per-page="5" class="text-no-wrap">
-
       <template #item.id="{ item }">
         <span class="text-h6">{{ item.id }}</span>
       </template>
       <template #item.name="{ item }">
         <div class="d-flex align-center">
-          <VAvatar size="32" :color="item.avatar_url ? '' : 'primary'"
-            :class="item.avatar_url ? '' : 'v-avatar-light-bg primary--text'"
-            :variant="!item.avatar_url ? 'tonal' : undefined">
-            <VImg v-if="item.avatar_url" :src="item.avatar_url" />
+          <VAvatar size="32" :color="item.user.avatar_url ? '' : 'primary'"
+            :class="item.user.avatar_url ? '' : 'v-avatar-light-bg primary--text'"
+            :variant="!item.user.avatar_url ? 'tonal' : undefined">
+            <VImg v-if="item.user.avatar_url" :src="item.user.avatar_url" />
             <span v-else class="text-sm">{{ avatarText(item.name) }}</span>
           </VAvatar>
           <div class="d-flex flex-column ms-3">
             <span class="d-block font-weight-medium text-high-emphasis text-truncate">{{ item.name }}</span>
-            <small>{{ item.surname ? ' ' + item.surname : '' }}</small>
+            <small>{{ item.name ? ' ' + item.last_name : '' }}</small>
           </div>
         </div>
       </template>
       <template #item.status="{ item }">
-        <VChip :color="item.email_verified_at != null ? 'success' : 'error'" size="small">
-          {{ item.email_verified_at != null ? 'Activo' : 'No activo' }}
-        </VChip>
-      </template>
-      <template #item.role="{ item }">
-        <VChip color="primary" size="small">
-          {{ item.role.name }}
+        <VChip :color="item.is_active ? 'success' : 'error'" size="small">
+          {{ item.is_active ? 'Activo' : 'Inactivo' }}
         </VChip>
       </template>
       <template #item.created_at="{ item }">
@@ -120,5 +174,8 @@ onMounted(() => {
         </div>
       </template>
     </VDataTable>
+    <DialogConfirm v-if="eliminar" title="Confirmar eliminación"
+      text="¿Estás seguro de que deseas eliminar el veterinario?" :confirm="confirmDelete" @close="handleDialogClose" />
   </VCard>
+
 </template>
