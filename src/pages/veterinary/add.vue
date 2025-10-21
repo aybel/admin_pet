@@ -316,8 +316,19 @@ const store = async () => {
       <VAlert v-if="success" type="success" class="mb-4">
         {{ success }}
       </VAlert>
-
       <!-- Formulario -->
+      <VRow>
+        <VCol cols="12">
+          <div class="d-flex justify-end gap-4 mb-6">
+            <VBtn variant="outlined" to="/users">
+              Limpiar formulario
+            </VBtn>
+            <VBtn color="primary" @click="store">
+              Guardar veterinario
+            </VBtn>
+          </div>
+        </VCol>
+      </VRow>
       <VForm>
         <VRow>
           <VCol cols="12">
@@ -379,16 +390,6 @@ const store = async () => {
           </VCol>
         </VRow>
       </VForm>
-
-      <!-- Botones -->
-      <div class="d-flex justify-end gap-4 mt-6">
-        <VBtn variant="outlined" to="/users">
-          Limpiar formulario
-        </VBtn>
-        <VBtn color="primary" @click="store">
-          Guardar veterinario
-        </VBtn>
-      </div>
     </VCardText>
   </VCard>
 </template>

@@ -22,13 +22,13 @@ declare module 'vue-router/auto-routes' {
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
     'dashboard': RouteRecordInfo<'dashboard', '/dashboard', Record<never, never>, Record<never, never>>,
     'list-user': RouteRecordInfo<'list-user', '/list-user', Record<never, never>, Record<never, never>>,
-    'list-veterinary': RouteRecordInfo<'list-veterinary', '/list-veterinary', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'products': RouteRecordInfo<'products', '/products', Record<never, never>, Record<never, never>>,
     'roles-permisos': RouteRecordInfo<'roles-permisos', '/roles-permisos', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'veterinary-add': RouteRecordInfo<'veterinary-add', '/veterinary/add', Record<never, never>, Record<never, never>>,
+    'veterinary-list': RouteRecordInfo<'veterinary-list', '/veterinary/list', Record<never, never>, Record<never, never>>,
     'veterinary-schedule-veterinary': RouteRecordInfo<'veterinary-schedule-veterinary', '/veterinary/schedule-veterinary', Record<never, never>, Record<never, never>>,
   }
 }

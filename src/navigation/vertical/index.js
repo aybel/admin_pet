@@ -27,7 +27,7 @@ export default [
       },
       {
         title: 'Listado',
-        to: 'list-veterinary',
+        to: 'veterinary-list',
         icon: { icon: 'ri-radio-button-line' },
       },
     ],
